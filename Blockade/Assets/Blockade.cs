@@ -67,12 +67,12 @@ public class Blockade : MonoBehaviour {
         {
             timer = 0;
             current += direction;
-            current2 += direction2;
-            if(grid[(int)current.x, (int)current.y].GetComponent<SpriteRenderer>().sprite == green)
+            if (grid[(int)current.x, (int)current.y].GetComponent<SpriteRenderer>().sprite == green)
             {
                 score2++;
                 gameOver(1);
             }
+            current2 += direction2;
             if (grid[(int)current2.x, (int)current2.y].GetComponent<SpriteRenderer>().sprite == green)
             {
                 score1++;
