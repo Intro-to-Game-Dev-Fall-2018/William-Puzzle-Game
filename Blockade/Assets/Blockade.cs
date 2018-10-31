@@ -11,13 +11,13 @@ public class Blockade : MonoBehaviour {
     public TextMesh s1;
     public TextMesh s2;
 
-    public Sprite green;
-    public Sprite black;
+    public static Sprite green;
+    public static Sprite black;
 
     public Vector3 direction;
     public Vector3 direction2;
-    public Vector3 current;
-    public Vector3 current2;
+    public static Vector3 current;
+    public static Vector3 current2;
 
     public int score1;
     public int score2;
@@ -25,7 +25,7 @@ public class Blockade : MonoBehaviour {
 
     public float timer = 0f;
 
-    GameObject[,] grid = new GameObject[100, 100];
+    static GameObject[,] grid = new GameObject[100, 100];
     
 
 	// Use this for initialization
@@ -157,5 +157,35 @@ public class Blockade : MonoBehaviour {
         direction2 = new Vector3(0, 1);
 
         bkgd.Play();
+    }
+
+
+    IEnumerator gameoverTransition(int s);
+    {
+        for (int i = 0; i < 15; i++)
+        {
+            if(s == 1 && i % 3 == 0)
+            {
+                if ((grid[(int) current.x, (int) current.y].GetComponent<SpriteRenderer>().sprite == green))
+                {
+                    grid[(int) current.x, (int) current.y].GetComponent<SpriteRenderer>().sprite = black;
+                }
+                else
+                {
+                    grid[(int) current.x, (int) current.y].GetComponent<SpriteRenderer>().sprite = green;
+                }
+            }
+            else if(s == 2 && i % 3 == 0)
+            {
+                if ((grid[(int) current2.x, (int) current2.y].GetComponent<SpriteRenderer>().sprite == green))
+                {
+                    grid[(int) current2.x, (int) current2.y].GetComponent<SpriteRenderer>().sprite = black;
+                }
+                else
+                {
+                    grid[(int) current2.x, (int) current2.y].GetComponent<SpriteRenderer>().sprite = green;
+                }
+            }
+        }
     }
 }
