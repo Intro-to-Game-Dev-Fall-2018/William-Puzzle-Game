@@ -60,13 +60,14 @@ public class Blockade : MonoBehaviour {
         score2 = 0;
 
         transition = false;
-        //bkgd.Play();
+        bkgd.Play();
     }
 	
 	// Update is called once per frame
 	void Update () {
         if(transition)
         {
+            bkgd.Stop();
             timer += Time.deltaTime;
             transitionTimer += Time.deltaTime;
             if (winner == 1 && timer >= 0.2f)
