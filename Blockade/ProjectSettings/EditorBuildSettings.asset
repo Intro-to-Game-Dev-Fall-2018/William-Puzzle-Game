@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/BlockadeScene.unity
-    guid: 478bb13ad1f86734ab94406b65874e54
-  - enabled: 1
     path: Assets/Scenes/BlockadeMenu.unity
     guid: 91945248c9c9bd744a729fc7bbb5b2ff
+  - enabled: 1
+    path: Assets/Scenes/BlockadeScene.unity
+    guid: 478bb13ad1f86734ab94406b65874e54
   m_configObjects: {}

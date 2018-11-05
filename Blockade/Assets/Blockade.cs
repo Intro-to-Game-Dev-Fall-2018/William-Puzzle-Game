@@ -8,6 +8,7 @@ public class Blockade : MonoBehaviour {
     public GameObject gridBlock;
 
     public AudioSource bkgd;
+    public AudioSource hit;
 
     public TextMesh s1;
     public TextMesh s2;
@@ -23,8 +24,13 @@ public class Blockade : MonoBehaviour {
     public int score1;
     public int score2;
 
+    public int ammo;
+    public int ammo2;
+
     public int winner;
     public bool transition;
+
+    public float speed;
 
     public float timer = 0f;
     public float transitionTimer = 0f;
@@ -58,6 +64,9 @@ public class Blockade : MonoBehaviour {
 
         score1 = 0;
         score2 = 0;
+        ammo = 3;
+        ammo2 = 3;
+        speed = 0.3f;
 
         transition = false;
         bkgd.Play();
@@ -72,7 +81,6 @@ public class Blockade : MonoBehaviour {
             transitionTimer += Time.deltaTime;
             if (winner == 1 && timer >= 0.2f)
             {
-                Debug.Log("s1");
                 if ((grid[(int)current.x, (int)current.y].GetComponent<SpriteRenderer>().sprite == green))
                 {
                     grid[(int)current.x, (int)current.y].GetComponent<SpriteRenderer>().sprite = black;
@@ -85,7 +93,6 @@ public class Blockade : MonoBehaviour {
             }
             else if (winner == 2 && timer >= 0.2f)
             {
-                Debug.Log("s2");
                 if ((grid[(int)current2.x, (int)current2.y].GetComponent<SpriteRenderer>().sprite == green))
                 {
                     grid[(int)current2.x, (int)current2.y].GetComponent<SpriteRenderer>().sprite = black;
@@ -113,7 +120,7 @@ public class Blockade : MonoBehaviour {
             timer += Time.deltaTime;
             //Debug.Log(current);
             //Debug.Log(current2);
-            if (timer >= 0.3f)
+            if (timer >= speed)
             {
                 timer = 0;
                 current += direction;
@@ -125,6 +132,7 @@ public class Blockade : MonoBehaviour {
                     s1.text = score1.ToString();
                     transition = true;
                     winner = 1;
+                    hit.Play();
                 }
                 current2 += direction2;
                 if (grid[(int)current2.x, (int)current2.y].GetComponent<SpriteRenderer>().sprite == green)
@@ -135,6 +143,8 @@ public class Blockade : MonoBehaviour {
                     s2.text = score2.ToString();
                     transition = true;
                     winner = 2;
+                    if (!hit.isPlaying)
+                        hit.Play();
                 }
                 grid[(int)current.x, (int)current.y].GetComponent<SpriteRenderer>().sprite = green;
                 grid[(int)current2.x, (int)current2.y].GetComponent<SpriteRenderer>().sprite = green;
@@ -177,6 +187,36 @@ public class Blockade : MonoBehaviour {
             {
                 direction2 = new Vector3(1f, 0);
             }
+
+            if (Input.GetKeyDown("1"))
+            {
+                speed = 0.2f;
+            }
+
+            if (Input.GetKeyDown("2"))
+            {
+                speed = 0.3f;
+            }
+
+            if (Input.GetKeyDown("3"))
+            {
+                speed = 0.5f;
+            }
+
+
+
+            if (Input.GetKeyDown("z") && ammo > 0)
+            {
+                StartCoroutine(clearShot(direction, current));
+                ammo--;
+            }
+
+            if (Input.GetKeyDown("right shift") && ammo2 > 0)
+            {
+                StartCoroutine(clearShot(direction2, current2));
+                ammo--;
+            }
+
         }
 
 
@@ -221,35 +261,30 @@ public class Blockade : MonoBehaviour {
     }
 
 
-    IEnumerator gameoverTransition(int s)
+    IEnumerator clearShot(Vector2 dir, Vector2 cur)
     {
-        for (float i = 0; i < 1500f; i += 0.1f)
-        {
-            if(s == 1 && i % 3 == 0)
-            {
-                if ((grid[(int) current.x, (int) current.y].GetComponent<SpriteRenderer>().sprite == green))
-                {
-                    grid[(int) current.x, (int) current.y].GetComponent<SpriteRenderer>().sprite = black;
-                }
-                else
-                {
-                    grid[(int) current.x, (int) current.y].GetComponent<SpriteRenderer>().sprite = green;
-                }
-            }
-            else if(s == 2 && i % 3 == 0)
-            {
-                if ((grid[(int) current2.x, (int) current2.y].GetComponent<SpriteRenderer>().sprite == green))
-                {
-                    grid[(int) current2.x, (int) current2.y].GetComponent<SpriteRenderer>().sprite = black;
-                }
-                else
-                {
-                    grid[(int) current2.x, (int) current2.y].GetComponent<SpriteRenderer>().sprite = green;
-                }
-            }
-        }
 
-        yield return null;
+        Debug.Log("shot");
+
+        Vector2 c = cur;
+
+        while(c.x != 99 && c.y != 99)
+        {
+            c += dir;
+
+            Debug.Log(c);
+
+            if (c.x >= 99 || c.y >= 99 || c.x <= 0 || c.y <= 0)
+            {
+                break;
+            }
+
+
+            if (grid[(int)c.x, (int)c.y].GetComponent<SpriteRenderer>().sprite == green && !c.Equals(current) && !c.Equals(current2)) {
+                grid[(int)c.x, (int)c.y].GetComponent<SpriteRenderer>().sprite = black;
+            }
+            yield return null;
+        }
 
     }
 }
