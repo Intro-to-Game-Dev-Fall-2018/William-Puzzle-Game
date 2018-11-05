@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Blockade : MonoBehaviour {
 
@@ -11,8 +12,8 @@ public class Blockade : MonoBehaviour {
     public TextMesh s1;
     public TextMesh s2;
 
-    public static Sprite green;
-    public static Sprite black;
+    public Sprite green;
+    public Sprite black;
 
     public Vector3 direction;
     public Vector3 direction2;
@@ -22,8 +23,11 @@ public class Blockade : MonoBehaviour {
     public int score1;
     public int score2;
 
+    public int winner;
+    public bool transition;
 
     public float timer = 0f;
+    public float transitionTimer = 0f;
 
     static GameObject[,] grid = new GameObject[100, 100];
     
@@ -55,74 +59,130 @@ public class Blockade : MonoBehaviour {
         score1 = 0;
         score2 = 0;
 
-        bkgd.Play();
+        transition = false;
+        //bkgd.Play();
     }
 	
 	// Update is called once per frame
 	void Update () {
-        timer += Time.deltaTime;
-        //Debug.Log(current);
-        //Debug.Log(current2);
-        if (timer >= 0.3f)
+        if(transition)
         {
-            timer = 0;
-            current += direction;
-            if (grid[(int)current.x, (int)current.y].GetComponent<SpriteRenderer>().sprite == green)
+            timer += Time.deltaTime;
+            transitionTimer += Time.deltaTime;
+            if (winner == 1 && timer >= 0.2f)
             {
-                score2++;
-                gameOver(1);
+                Debug.Log("s1");
+                if ((grid[(int)current.x, (int)current.y].GetComponent<SpriteRenderer>().sprite == green))
+                {
+                    grid[(int)current.x, (int)current.y].GetComponent<SpriteRenderer>().sprite = black;
+                }
+                else
+                {
+                    grid[(int)current.x, (int)current.y].GetComponent<SpriteRenderer>().sprite = green;
+                }
+                timer = 0;
             }
-            current2 += direction2;
-            if (grid[(int)current2.x, (int)current2.y].GetComponent<SpriteRenderer>().sprite == green)
+            else if (winner == 2 && timer >= 0.2f)
             {
-                score1++;
-                gameOver(2);
+                Debug.Log("s2");
+                if ((grid[(int)current2.x, (int)current2.y].GetComponent<SpriteRenderer>().sprite == green))
+                {
+                    grid[(int)current2.x, (int)current2.y].GetComponent<SpriteRenderer>().sprite = black;
+                }
+                else
+                {
+                    grid[(int)current2.x, (int)current2.y].GetComponent<SpriteRenderer>().sprite = green;
+                }
+                timer = 0;
             }
-            grid[(int)current.x, (int)current.y].GetComponent<SpriteRenderer>().sprite = green;
-            grid[(int)current2.x, (int)current2.y].GetComponent<SpriteRenderer>().sprite = green;
+
+            if(transitionTimer >= 5f)
+            {
+                s2.gameObject.SetActive(false);
+                s1.gameObject.SetActive(false);
+                transitionTimer = 0f;
+                timer = 0;
+                transition = false;
+                gameOver(winner);
+            }
 
         }
+        else
+        {
+            timer += Time.deltaTime;
+            //Debug.Log(current);
+            //Debug.Log(current2);
+            if (timer >= 0.3f)
+            {
+                timer = 0;
+                current += direction;
+                if (grid[(int)current.x, (int)current.y].GetComponent<SpriteRenderer>().sprite == green)
+                {
+                    s2.gameObject.SetActive(true);
+                    s1.gameObject.SetActive(true);
+                    score1++;
+                    s1.text = score1.ToString();
+                    transition = true;
+                    winner = 1;
+                }
+                current2 += direction2;
+                if (grid[(int)current2.x, (int)current2.y].GetComponent<SpriteRenderer>().sprite == green)
+                {
+                    s2.gameObject.SetActive(true);
+                    s1.gameObject.SetActive(true);
+                    score2++;
+                    s2.text = score2.ToString();
+                    transition = true;
+                    winner = 2;
+                }
+                grid[(int)current.x, (int)current.y].GetComponent<SpriteRenderer>().sprite = green;
+                grid[(int)current2.x, (int)current2.y].GetComponent<SpriteRenderer>().sprite = green;
+            }
 
-        //Debug.Log(current.x);      
+            //Debug.Log(current.x);      
 
-        //grid[(int) current.x, (int) current.y].GetComponent<SpriteRenderer>().sprite = green;
+            //grid[(int) current.x, (int) current.y].GetComponent<SpriteRenderer>().sprite = green;
 
-        if(Input.GetKeyDown("w"))
-        {
-            direction = new Vector3(0, 1f);
-        }
-        if (Input.GetKeyDown("a"))
-        {
-            direction = new Vector3(-1f, 0);
-        }
-        if (Input.GetKeyDown("s"))
-        {
-            direction = new Vector3(0, -1f);
-        }
-        if (Input.GetKeyDown("d"))
-        {
-            direction = new Vector3(1f, 0);
+            if (Input.GetKeyDown("w"))
+            {
+                direction = new Vector3(0, 1f);
+            }
+            if (Input.GetKeyDown("a"))
+            {
+                direction = new Vector3(-1f, 0);
+            }
+            if (Input.GetKeyDown("s"))
+            {
+                direction = new Vector3(0, -1f);
+            }
+            if (Input.GetKeyDown("d"))
+            {
+                direction = new Vector3(1f, 0);
+            }
+
+            if (Input.GetKeyDown("up"))
+            {
+                direction2 = new Vector3(0, 1f);
+            }
+            if (Input.GetKeyDown("left"))
+            {
+                direction2 = new Vector3(-1f, 0);
+            }
+            if (Input.GetKeyDown("down"))
+            {
+                direction2 = new Vector3(0, -1f);
+            }
+            if (Input.GetKeyDown("right"))
+            {
+                direction2 = new Vector3(1f, 0);
+            }
         }
 
-        if (Input.GetKeyDown("up"))
-        {
-            direction2 = new Vector3(0, 1f);
-        }
-        if (Input.GetKeyDown("left"))
-        {
-            direction2 = new Vector3(-1f, 0);
-        }
-        if (Input.GetKeyDown("down"))
-        {
-            direction2 = new Vector3(0, -1f);
-        }
-        if (Input.GetKeyDown("right"))
-        {
-            direction2 = new Vector3(1f, 0);
-        }
+
         if (Input.GetKeyDown("r"))
         {
-            gameOver(3);
+            SceneManager.LoadScene("BlockadeMenu", LoadSceneMode.Single);
+
         }
 
     }
@@ -160,9 +220,9 @@ public class Blockade : MonoBehaviour {
     }
 
 
-    IEnumerator gameoverTransition(int s);
+    IEnumerator gameoverTransition(int s)
     {
-        for (int i = 0; i < 15; i++)
+        for (float i = 0; i < 1500f; i += 0.1f)
         {
             if(s == 1 && i % 3 == 0)
             {
@@ -187,5 +247,8 @@ public class Blockade : MonoBehaviour {
                 }
             }
         }
+
+        yield return null;
+
     }
 }
